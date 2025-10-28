@@ -78,7 +78,9 @@ def load_db_config() -> DBConfig:
     config_values: Dict[str, str] = {}
 
     config_file_env = os.getenv("DB_CONFIG_FILE")
-    config_file = Path(config_file_env) if config_file_env else DEFAULT_CONFIG_PATH
+    config_file = (
+        Path(config_file_env).expanduser() if config_file_env else DEFAULT_CONFIG_PATH
+    )
     if config_file.exists():
         parser = configparser.ConfigParser()
         parser.read(config_file)
@@ -277,6 +279,7 @@ def generate_page(
     final_content = inject_snippets(skeleton, rendered_snippets)
 
     output = output_path or Path(page_name)
+    output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(final_content, encoding="utf-8")
     LOGGER.info("Generated page %s", output)
     return output
@@ -289,9 +292,10 @@ def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
         help="Page name to generate (e.g. turkey.html)",
     )
     parser.add_argument(
-        "snippet_template",
+        "--snippet-template",
         type=Path,
-        help="Snippet template filename (e.g. snippet.html)",
+        default=None,
+        help="Snippet template filename (defaults to templates/snippet.html)",
     )
     parser.add_argument(
         "--output",

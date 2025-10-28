@@ -5,8 +5,14 @@ import pytest
 from src import generator
 
 
-def test_parse_args_requires_snippet_template():
-    args = generator.parse_args(["page.html", "snippet.html"])
+def test_parse_args_defaults_snippet_template():
+    args = generator.parse_args(["page.html"])
+    assert args.page_name == "page.html"
+    assert args.snippet_template is None
+
+
+def test_parse_args_accepts_optional_snippet_template():
+    args = generator.parse_args(["page.html", "--snippet-template", "snippet.html"])
     assert args.page_name == "page.html"
     assert args.snippet_template == Path("snippet.html")
 
