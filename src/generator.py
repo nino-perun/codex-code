@@ -185,12 +185,40 @@ def render_snippet(snippet_template: str, data: Mapping[str, object]) -> str:
     return PLACEHOLDER_PATTERN.sub(replace, snippet_template)
 
 
-def render_snippets(snippet_template: str, snippets: Iterable[Mapping[str, object]]) -> str:
-    """Render all snippets using the template and concatenate them."""
+def _is_snippet_active(snippet: Mapping[str, object]) -> bool:
+    """Return True if the snippet contains an active flag that is non-zero."""
 
-    rendered = [render_snippet(snippet_template, snippet) for snippet in snippets]
-    LOGGER.debug("Rendered %d snippet(s)", len(rendered))
-    return "\n".join(rendered)
+    if "active" not in snippet:
+        LOGGER.debug("Skipping snippet without 'active' flag: %s", snippet)
+        return False
+
+    active_value = snippet["active"]
+    try:
+        return int(active_value) != 0
+    except (TypeError, ValueError):
+        LOGGER.warning(
+            "Snippet has non-integer active flag %r; skipping snippet", active_value
+        )
+        return False
+
+
+def render_snippets(snippet_template: str, snippets: Iterable[Mapping[str, object]]) -> str:
+    """Render all active snippets using the template and concatenate them."""
+
+    rendered_snippets: List[str] = []
+    skipped = 0
+    for snippet in snippets:
+        if not _is_snippet_active(snippet):
+            skipped += 1
+            continue
+        rendered_snippets.append(render_snippet(snippet_template, snippet))
+
+    LOGGER.debug(
+        "Rendered %d snippet(s); skipped %d inactive snippet(s)",
+        len(rendered_snippets),
+        skipped,
+    )
+    return "\n".join(rendered_snippets)
 
 
 def inject_snippets(skeleton: str, rendered_snippets: str) -> str:
