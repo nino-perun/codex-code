@@ -33,22 +33,8 @@ def test_render_snippet_replaces_placeholders(template, data, expected):
 
 def test_render_snippets_concatenates_results():
     template = "<p>%%title%%</p>"
-    data = [
-        {"title": "First", "active": 1},
-        {"title": "Second", "active": 2},
-    ]
+    data = [{"title": "First"}, {"title": "Second"}]
     assert generator.render_snippets(template, data) == "<p>First</p>\n<p>Second</p>"
-
-
-def test_render_snippets_skips_inactive_snippets():
-    template = "<p>%%title%%</p>"
-    data = [
-        {"title": "First", "active": 0},
-        {"title": "Second", "active": 1},
-        {"title": "Third", "active": "0"},
-        {"title": "Fourth", "active": "2"},
-    ]
-    assert generator.render_snippets(template, data) == "<p>Second</p>\n<p>Fourth</p>"
 
 
 def test_inject_snippets_missing_marker_raises():
@@ -101,7 +87,7 @@ def test_generate_page_uses_provided_snippet_template(monkeypatch, tmp_path):
             return None
 
         def fetchall(self):
-            return [{"title": "Hello", "extra": "World", "active": 1}]
+            return [{"title": "Hello", "extra": "World"}]
 
     class DummyConnection:
         def __enter__(self):
