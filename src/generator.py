@@ -139,7 +139,7 @@ def fetch_page(cursor, page_name: str) -> Mapping[str, object]:
     """Fetch the trip page record for the given page name."""
 
     LOGGER.debug("Fetching trip_page for %s", page_name)
-    cursor.execute("SELECT * FROM trip_page WHERE page_name = %s", (page_name,))
+    cursor.execute("SELECT * FROM tlinq.trip_page WHERE page_name = %s", (page_name,))
     row = cursor.fetchone()
     if row is None:
         raise GenerationError(f"No trip_page entry found for {page_name!r}")
@@ -151,7 +151,8 @@ def fetch_snippets(cursor, page_id: object) -> List[Mapping[str, object]]:
 
     LOGGER.debug("Fetching trip_snippet rows for page_id=%s", page_id)
     cursor.execute(
-        "SELECT * FROM trip_snippet WHERE page_id = %s ORDER BY id", (page_id,)
+        "SELECT * FROM tlinq.trip_snippet WHERE page_id = %s ORDER BY snippet_id",
+        (page_id,),
     )
     return list(cursor.fetchall())
 
@@ -267,9 +268,9 @@ def generate_page(
     with connect_to_db(config) as conn:
         with conn.cursor(row_factory=dict_row) as cursor:
             page = fetch_page(cursor, page_name)
-            page_id = page.get("id")
+            page_id = page.get("page_id")
             if page_id is None:
-                raise GenerationError("trip_page row is missing an 'id' column")
+                raise GenerationError("trip_page row is missing a 'page_id' column")
             snippets = fetch_snippets(cursor, page_id)
 
     rendered_snippets = render_snippets(snippet_template, snippets)

@@ -33,8 +33,23 @@ def test_render_snippet_replaces_placeholders(template, data, expected):
 
 def test_render_snippets_concatenates_results():
     template = "<p>%%title%%</p>"
-    data = [{"title": "First"}, {"title": "Second"}]
+    data = [
+        {"title": "First", "active": 1},
+        {"title": "Second", "active": 2},
+    ]
     assert generator.render_snippets(template, data) == "<p>First</p>\n<p>Second</p>"
+
+
+def test_render_snippets_skips_inactive_snippets():
+    template = "<p>%%title%%</p>"
+    data = [
+        {"title": "First", "active": 0},
+        {"title": "Second", "active": 1},
+        {"title": "Third", "active": "0"},
+        {"title": "Fourth", "active": "2"},
+        {"title": "Fifth"},
+    ]
+    assert generator.render_snippets(template, data) == "<p>Second</p>\n<p>Fourth</p>"
 
 
 def test_inject_snippets_missing_marker_raises():
@@ -70,6 +85,7 @@ def test_generate_page_uses_provided_snippet_template(monkeypatch, tmp_path):
     class DummyCursor:
         def __init__(self):
             self._fetched_page = False
+            self.queries = []
 
         def __enter__(self):
             return self
@@ -78,18 +94,21 @@ def test_generate_page_uses_provided_snippet_template(monkeypatch, tmp_path):
             return False
 
         def execute(self, query, params):
-            self.last_query = (query, params)
+            self.queries.append((query, params))
 
         def fetchone(self):
             if not self._fetched_page:
                 self._fetched_page = True
-                return {"id": 7}
+                return {"page_id": 7}
             return None
 
         def fetchall(self):
-            return [{"title": "Hello", "extra": "World"}]
+            return [{"title": "Hello", "extra": "World", "active": 1}]
 
     class DummyConnection:
+        def __init__(self):
+            self.cursor_instance = DummyCursor()
+
         def __enter__(self):
             return self
 
@@ -97,11 +116,13 @@ def test_generate_page_uses_provided_snippet_template(monkeypatch, tmp_path):
             return False
 
         def cursor(self, row_factory=None):
-            return DummyCursor()
+            return self.cursor_instance
+
+    connection = DummyConnection()
 
     monkeypatch.setenv("TEMPLATES_DIR", str(templates_dir))
     monkeypatch.setattr(generator, "load_db_config", lambda: None)
-    monkeypatch.setattr(generator, "connect_to_db", lambda config: DummyConnection())
+    monkeypatch.setattr(generator, "connect_to_db", lambda config: connection)
 
     output_path = tmp_path / "example.html"
     result = generator.generate_page(
@@ -115,3 +136,7 @@ def test_generate_page_uses_provided_snippet_template(monkeypatch, tmp_path):
         output_path.read_text(encoding="utf-8")
         == '<section name="data_placeholder"><article>Hello World</article></section>'
     )
+
+    executed_queries = connection.cursor_instance.queries
+    assert executed_queries[0][0].startswith("SELECT * FROM tlinq.trip_page")
+    assert executed_queries[1][0].startswith("SELECT * FROM tlinq.trip_snippet")
