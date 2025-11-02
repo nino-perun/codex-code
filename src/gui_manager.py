@@ -7,6 +7,7 @@ import logging
 import tkinter as tk
 from tkinter import messagebox, ttk
 from typing import Dict, Optional
+from pathlib import Path
 
 from . import generator
 
@@ -104,6 +105,8 @@ class TripManagerApp:
             entry.grid(row=idx, column=1, sticky="ew", padx=(5, 0))
             page_form.rowconfigure(idx, weight=0)
             self.page_entries[field] = entry
+            if field == "page_id":
+                entry.configure(state="disabled")
         page_form.columnconfigure(1, weight=1)
 
         page_button_bar = ttk.Frame(master_frame, padding=(0, 5))
@@ -112,7 +115,10 @@ class TripManagerApp:
             row=0, column=0, padx=(0, 5)
         )
         ttk.Button(page_button_bar, text="Save Page", command=self._save_page).grid(
-            row=0, column=1
+            row=0, column=1, padx=(0, 5)
+        )
+        ttk.Button(page_button_bar, text="Generate", command=self._generate_page).grid(
+            row=0, column=2
         )
 
         # Detail pane
@@ -147,7 +153,7 @@ class TripManagerApp:
             entry.grid(row=idx, column=1, sticky="ew", padx=(5, 0))
             snippet_form.rowconfigure(idx, weight=0)
             self.snippet_entries[field] = entry
-            if field == "page_id":
+            if field in {"snippet_id", "page_id"}:
                 entry.configure(state="disabled")
         snippet_form.columnconfigure(1, weight=1)
 
@@ -166,7 +172,7 @@ class TripManagerApp:
     def _load_pages(self) -> None:
         self.page_tree.delete(*self.page_tree.get_children())
         with self.conn.cursor(row_factory=dict_row) as cursor:
-            cursor.execute("SELECT page_id, page_name, page_desc FROM tlinq.trip_page ORDER BY page_id")
+            cursor.execute("SELECT page_id, page_name, page_desc FROM trip_page ORDER BY page_id")
             for row in cursor.fetchall():
                 self.page_tree.insert(
                     "",
@@ -180,7 +186,7 @@ class TripManagerApp:
         self.snippet_tree.delete(*self.snippet_tree.get_children())
         with self.conn.cursor(row_factory=dict_row) as cursor:
             cursor.execute(
-                "SELECT snippet_id, code, title, active FROM tlinq.trip_snippet WHERE page_id = %s ORDER BY snippet_id",
+                "SELECT snippet_id, code, title, active FROM trip_snippet WHERE page_id = %s ORDER BY snippet_id",
                 (page_id,),
             )
             for row in cursor.fetchall():
@@ -220,7 +226,7 @@ class TripManagerApp:
     def _populate_page_form(self, page_id: int) -> None:
         with self.conn.cursor(row_factory=dict_row) as cursor:
             cursor.execute(
-                "SELECT page_id, page_name, page_desc FROM tlinq.trip_page WHERE page_id = %s",
+                "SELECT page_id, page_name, page_desc FROM trip_page WHERE page_id = %s",
                 (page_id,),
             )
             row = cursor.fetchone()
@@ -237,7 +243,7 @@ class TripManagerApp:
 
     def _populate_snippet_form(self, snippet_id: int) -> None:
         with self.conn.cursor(row_factory=dict_row) as cursor:
-            cursor.execute("SELECT * FROM tlinq.trip_snippet WHERE snippet_id = %s", (snippet_id,))
+            cursor.execute("SELECT * FROM trip_snippet WHERE snippet_id = %s", (snippet_id,))
             row = cursor.fetchone()
         if not row:
             return
@@ -256,6 +262,9 @@ class TripManagerApp:
         for field, entry in self.page_entries.items():
             entry.configure(state="normal")
             entry.delete(0, tk.END)
+        # Keep ID read-only and blank for new record
+        if "page_id" in self.page_entries:
+            self.page_entries["page_id"].configure(state="disabled")
         self.current_page_id = None
 
     def _clear_snippet_form(self) -> None:
@@ -263,6 +272,10 @@ class TripManagerApp:
             entry.configure(state="normal")
             entry.delete(0, tk.END)
         self.current_snippet_id = None
+        # Keep IDs read-only; preset page_id to currently selected page
+        snippet_id_entry = self.snippet_entries.get("snippet_id")
+        if snippet_id_entry is not None:
+            snippet_id_entry.configure(state="disabled")
         page_entry = self.snippet_entries.get("page_id")
         if page_entry is not None:
             page_entry.configure(state="normal")
@@ -278,31 +291,27 @@ class TripManagerApp:
 
     def _save_page(self) -> None:  # pragma: no cover - UI callback
         data = {field: entry.get().strip() for field, entry in self.page_entries.items()}
-        if not data["page_id"]:
-            messagebox.showerror("Validation Error", "Page ID is required.")
-            return
         if not data["page_name"]:
             messagebox.showerror("Validation Error", "Page name is required.")
-            return
-        try:
-            page_id = int(data["page_id"])
-        except ValueError:
-            messagebox.showerror("Validation Error", "Page ID must be an integer.")
             return
 
         try:
             with self.conn.cursor() as cursor:
                 if self.current_page_id is None:
+                    # Use sequence to generate page_id automatically
                     cursor.execute(
-                        "INSERT INTO tlinq.trip_page (page_id, page_name, page_desc) VALUES (%s, %s, %s)",
-                        (page_id, data["page_name"], data.get("page_desc") or None),
+                        "INSERT INTO trip_page (page_id, page_name, page_desc) VALUES (nextval('trip_page_gen'), %s, %s) RETURNING page_id",
+                        (data["page_name"], data.get("page_desc") or None),
                     )
+                    page_id_row = cursor.fetchone()
+                    page_id = int(page_id_row[0]) if page_id_row is not None else None
                     LOGGER.info("Inserted trip_page %s", page_id)
                 else:
                     cursor.execute(
-                        "UPDATE tlinq.trip_page SET page_name = %s, page_desc = %s WHERE page_id = %s",
+                        "UPDATE trip_page SET page_name = %s, page_desc = %s WHERE page_id = %s",
                         (data["page_name"], data.get("page_desc") or None, self.current_page_id),
                     )
+                    page_id = self.current_page_id
                     LOGGER.info("Updated trip_page %s", self.current_page_id)
             self.conn.commit()
         except Exception as exc:  # pragma: no cover - UI callback
@@ -312,8 +321,9 @@ class TripManagerApp:
             return
 
         self._load_pages()
-        self.page_tree.selection_set(str(page_id))
-        self.page_tree.focus(str(page_id))
+        if page_id is not None:
+            self.page_tree.selection_set(str(page_id))
+            self.page_tree.focus(str(page_id))
         messagebox.showinfo("Success", "Page saved successfully.")
 
     def _add_snippet(self) -> None:  # pragma: no cover - UI callback
@@ -327,14 +337,6 @@ class TripManagerApp:
             messagebox.showwarning("Select Page", "Select a page before saving snippets.")
             return
         data = {field: entry.get().strip() for field, entry in self.snippet_entries.items()}
-        if not data["snippet_id"]:
-            messagebox.showerror("Validation Error", "Snippet ID is required.")
-            return
-        try:
-            snippet_id = int(data["snippet_id"])
-        except ValueError:
-            messagebox.showerror("Validation Error", "Snippet ID must be an integer.")
-            return
 
         active_value = data.get("active", "")
         if active_value:
@@ -352,17 +354,17 @@ class TripManagerApp:
         try:
             with self.conn.cursor() as cursor:
                 if self.current_snippet_id is None:
+                    # Use sequence to generate snippet_id automatically
                     cursor.execute(
                         """
-                        INSERT INTO tlinq.trip_snippet (
+                        INSERT INTO trip_snippet (
                             snippet_id, page_id, code, request_desc, destination, image, imagetitle,
                             tagline1, tagline2, price, title, shortdesc, description, inclusionhtml, active
                         ) VALUES (
-                            %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
-                        )
+                            nextval('trip_snippet_gen'), %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
+                        ) RETURNING snippet_id
                         """,
                         (
-                            snippet_id,
                             self.current_page_id,
                             _normalize(data.get("code", "")),
                             _normalize(data.get("request_desc", "")),
@@ -379,11 +381,13 @@ class TripManagerApp:
                             active_int,
                         ),
                     )
+                    row = cursor.fetchone()
+                    snippet_id = int(row[0]) if row is not None else None
                     LOGGER.info("Inserted trip_snippet %s", snippet_id)
                 else:
                     cursor.execute(
                         """
-                        UPDATE tlinq.trip_snippet SET
+                        UPDATE trip_snippet SET
                             code = %s,
                             request_desc = %s,
                             destination = %s,
@@ -416,6 +420,7 @@ class TripManagerApp:
                             self.current_snippet_id,
                         ),
                     )
+                    snippet_id = self.current_snippet_id
                     LOGGER.info("Updated trip_snippet %s", self.current_snippet_id)
             self.conn.commit()
         except Exception as exc:  # pragma: no cover - UI callback
@@ -426,9 +431,36 @@ class TripManagerApp:
 
         self.current_snippet_id = snippet_id
         self._load_snippets(self.current_page_id)
-        self.snippet_tree.selection_set(str(snippet_id))
-        self.snippet_tree.focus(str(snippet_id))
+        if snippet_id is not None:
+            self.snippet_tree.selection_set(str(snippet_id))
+            self.snippet_tree.focus(str(snippet_id))
         messagebox.showinfo("Success", "Snippet saved successfully.")
+
+    def _generate_page(self) -> None:  # pragma: no cover - UI callback
+        """Generate the currently selected page using generator.py.
+
+        - page_name is taken from the Page form's page_name field.
+        - snippet template is forced to templates/snippet.html.
+        """
+        page_name_entry = self.page_entries.get("page_name")
+        page_name = page_name_entry.get().strip() if page_name_entry else ""
+        if not page_name:
+            messagebox.showwarning("Select Page", "Please select a page (with a name) first.")
+            return
+        try:
+            output_path = generator.generate_page(
+                page_name=page_name,
+                snippet_template_name=Path("templates/snippet.html"),
+            )
+        except generator.GenerationError as exc:
+            LOGGER.exception("Generation failed: %s", exc)
+            messagebox.showerror("Generation Failed", str(exc))
+            return
+        except Exception as exc:  # pragma: no cover - catch-all safety
+            LOGGER.exception("Unexpected error during generation")
+            messagebox.showerror("Unexpected Error", str(exc))
+            return
+        messagebox.showinfo("Page Generated", f"Generated: {output_path}")
 
     # ------------------------------------------------------------------
     # Shutdown helper

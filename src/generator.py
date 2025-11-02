@@ -36,7 +36,7 @@ DEFAULT_CONFIG_PATH = Path(__file__).resolve().parent.parent / "config" / "datab
 DEFAULT_TEMPLATES_DIR = Path(__file__).resolve().parent.parent / "templates"
 DEFAULT_SNIPPET_TEMPLATE_NAME = Path("snippet.html")
 
-PLACEHOLDER_PATTERN = re.compile(r"%%([a-zA-Z0-9_]+)%%")
+PLACEHOLDER_PATTERN = re.compile(r"%%([a-zA-Z0-9_]+)%%", re.IGNORECASE)
 
 
 @dataclass
@@ -141,7 +141,7 @@ def fetch_page(cursor, page_name: str) -> Mapping[str, object]:
     """Fetch the trip page record for the given page name."""
 
     LOGGER.debug("Fetching trip_page for %s", page_name)
-    cursor.execute("SELECT * FROM tlinq.trip_page WHERE page_name = %s", (page_name,))
+    cursor.execute("SELECT * FROM trip_page WHERE page_name = %s", (page_name,))
     row = cursor.fetchone()
     if row is None:
         raise GenerationError(f"No trip_page entry found for {page_name!r}")
@@ -153,7 +153,7 @@ def fetch_snippets(cursor, page_id: object) -> List[Mapping[str, object]]:
 
     LOGGER.debug("Fetching trip_snippet rows for page_id=%s", page_id)
     cursor.execute(
-        "SELECT * FROM tlinq.trip_snippet WHERE page_id = %s ORDER BY snippet_id",
+        "SELECT * FROM trip_snippet WHERE page_id = %s ORDER BY snippet_id",
         (page_id,),
     )
     return list(cursor.fetchall())
@@ -178,11 +178,23 @@ def resolve_templates_dir() -> Path:
 
 
 def render_snippet(snippet_template: str, data: Mapping[str, object]) -> str:
-    """Render a single snippet using the provided template and data."""
+    """Render a single snippet using the provided template and data.
+
+    Placeholder names are matched case-insensitively, and data lookup is also
+    performed case-insensitively (preferring an exact-case match when available).
+    """
+
+    # Build a case-insensitive view of the data for fallback lookups
+    lower_map: Dict[str, object] = {
+        (k.lower() if isinstance(k, str) else str(k).lower()): v for k, v in data.items()
+    }
 
     def replace(match: re.Match[str]) -> str:
         field = match.group(1)
+        # Prefer exact-case key if present; otherwise fall back to case-insensitive
         value = data.get(field)
+        if value is None:
+            value = lower_map.get(field.lower())
         return "" if value is None else str(value)
 
     return PLACEHOLDER_PATTERN.sub(replace, snippet_template)

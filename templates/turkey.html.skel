@@ -1,0 +1,287 @@
+<!--
+  ~ Copyright (c) 2025. Perun Consulting Services FZ LLE
+  -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Turkiye Travel Packages – Explore Istanbul & Beyond | Best Deals by Perun Tours
+    </title>
+    <!-- Meta Description -->
+    <meta name="description" content="Discover Turkiye with Perun Tours! Enjoy 4-night packages to Istanbul starting at AED 1,650. Includes accommodations, transfers and guided tours. Book now for an unforgettable experience.">
+
+    <!-- Meta Keywords -->
+    <meta name="keywords" content="Turkiye tours, Istanbul travel packages, Turkey vacations, Perun Tours, vacation packages, luxury holidays, Istanbul sightseeing, Cappadocia adventures">
+
+    <!-- Robots Meta Tag -->
+    <meta name="robots" content="index, follow">
+
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="Turkiye Travel Packages – Explore Istanbul & Beyond | Perun Tours">
+    <meta property="og:description" content="Plan your Turkish getaway with Perun Tours! 4-night packages to Istanbul from AED 1,650 p/p including accommodations and tours. Book your trip now!">
+    <meta property="og:image" content="https://d117ew1ll41gas.cloudfront.net/images/hagia-sophia-540x360.webp">
+    <meta property="og:url" content="https://www.bookmyholiday.ae/turkiye.html">
+    <meta property="og:type" content="website">
+
+    <!-- Include Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="css/bmh.css" rel="stylesheet">
+    <style>
+        /* Header Section Styles */
+        .header {
+            height: 45vh;
+            background-image: url('https://d117ew1ll41gas.cloudfront.net/images/galata-1-wide.webp'); /* Replace with a relevant image */
+        }
+        .header h1 {
+            font-size: 3rem; /* Large text size */
+            background-color: rgba(0, 0, 0, 0.1);
+            text-shadow: 3px 3px 10px black;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+        }
+        /* Adjust header height on smaller screens */
+        @media (max-width: 768px) {
+            .header {
+                background-image: url('https://d117ew1ll41gas.cloudfront.net/images/istiklal-540x360.webp'); /* Replace with a relevant image */
+                height: 40vh;
+            }
+            .header h1 {
+                font-size: 2rem;
+            }
+        }
+        .card {
+            padding: 1rem;
+        }
+
+        /* Card descriptions with vertical layout adjustments */
+        .resort-card .card-body {
+            flex-grow: 1;
+        }
+        @media (min-width: 768px) {
+            .resort-card {
+                flex-direction: row; /* Horizontal layout for large screens */
+            }
+        }
+    </style>
+    <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "TouristDestination",
+            "name": "Travel to Turkiye - istanbul Holiday Packages",
+            "description": "Discover istanbul with Perun Tours. Holiday packages starting at AED 1650 include accommodations, transfers and sightseeing tours in Istanbul.",
+            "image": "https://d117ew1ll41gas.cloudfront.net/images/hagia-sophia-540x360.webp",
+            "url": "https://www.bookmyholiday.ae/turkiye.html",
+            "offers": [{
+                "@type": "Offer",
+                "name": "istanbul Holiday Package",
+                "price": "1650.00",
+                "priceCurrency": "AED",
+                "availability": "https://schema.org/InStock",
+                "url": "https://www.bookmyholiday.ae/turkiye.html",
+                "description": "4-night holiday package to istanbul including accommodations, transfers, and tours."
+            },{
+                "@type": "Offer",
+                "name": "istanbul Holiday Package",
+                "price": "1700.00",
+                "priceCurrency": "AED",
+                "availability": "https://schema.org/InStock",
+                "url": "https://www.bookmyholiday.ae/turkiye.html",
+                "description": "5-night holiday package to istanbul including accommodations, transfers, and tours."
+            }
+            ],
+            "contactPoint": {
+                "@type": "ContactPoint",
+                "telephone": "+971-58-583-3874",
+                "email": "holidays@peruntours.com",
+                "contactType": "customer service",
+                "availableLanguage": "English, Arabic, Hindi",
+                "areaServed": ["UAE"]
+            }
+        }
+    </script>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-349514486">
+    </script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'AW-349514486');
+    </script>
+</head>
+<body>
+
+<section id="pgheader" data-load-template="frag/header.html"></section>
+
+<!-- Header Section -->
+<header class="header">
+    <h1>Türkiye: Where East meets West, and past meets present.</h1>
+</header>
+
+<!-- Description Section -->
+<section class="container my-5">
+    <h2 class="text-center">Enjoy the eternal Istanbul</h2>
+    <p class=" lead text-center">
+        <br>Istanbul needs no introduction. This captivating city, where East literally meets West, offers a blend of
+        rich history and modern vibrancy. Get enchanted by the majestic Hagia Sophia and the Blue Mosque.
+        Lose yourself in the colorful shops of the Grand Bazaar. Take a cruise along the stunning Bosphorus and enjoy
+        Istanbul's unmatched culinary scene. With its warm hospitality and endless surprises, Istanbul isn't just a
+        destination—it's an experience that stays with you long after you return.
+        <br><br>
+        <b>
+            Perun Tours offers you the best value trips to Türkiye. Our packages include accommodation, transfers, and carefully selected tours and excursions.
+            Check out some of our choices, or chat with us directly to organize your perfect trip.
+        </b>
+    </p>
+</section>
+
+<!-- Resorts Section -->
+<section class="container my-5">
+    <div class="row gy-4">
+
+    --- INSERT SNIPPETS HERE ---
+
+    </div>
+</section>
+
+<!-- Review section -->
+<section class="container my-5">
+    <p class="lead text-center pb-3 mt-0 pt-0"><b>What our customers say about us</b></p>
+    <!-- Card Row -->
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-4">
+        <!-- Card 1 -->
+        <div class="col">
+            <div class="custom-card">
+                <div class="custom-circle" style="background-color: #4CAF50;">R</div>
+                <div class="custom-card-content">
+                    <div class="custom-rating mb-2">
+                        <img src="https://cdn-icons-png.flaticon.com/512/1828/1828884.png" alt="Star">
+                        <img src="https://cdn-icons-png.flaticon.com/512/1828/1828884.png" alt="Star">
+                        <img src="https://cdn-icons-png.flaticon.com/512/1828/1828884.png" alt="Star">
+                        <img src="https://cdn-icons-png.flaticon.com/512/1828/1828884.png" alt="Star">
+                        <img src="https://cdn-icons-png.flaticon.com/512/1828/1828884.png" alt="Star">
+                    </div>
+                    <div class="custom-review-body">
+                        They were incredibly accommodating and made our trip seamless from start to finish. Every detail was perfectly planned ..
+                    </div>
+                    <div class="custom-reviewer"><a href="https://maps.app.goo.gl/RrS2Zumsq2Z2qhX29" target="_blank">- Rahela Rajh</a></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="col">
+            <div class="custom-card">
+                <div class="custom-circle" style="background-color: #FF6F00;">S</div>
+                <div class="custom-card-content">
+                    <div class="custom-rating mb-2">
+                        <img src="https://cdn-icons-png.flaticon.com/512/1828/1828884.png" alt="Star">
+                        <img src="https://cdn-icons-png.flaticon.com/512/1828/1828884.png" alt="Star">
+                        <img src="https://cdn-icons-png.flaticon.com/512/1828/1828884.png" alt="Star">
+                        <img src="https://cdn-icons-png.flaticon.com/512/1828/1828884.png" alt="Star">
+                        <img src="https://cdn-icons-png.flaticon.com/512/1828/1828884.png" alt="Star">
+                    </div>
+                    <div class="custom-review-body">
+                        ...We recommend Perun Tours without any reservations. The services were professionally delivered and outstanding.
+                    </div>
+                    <div class="custom-reviewer"><a href="https://maps.app.goo.gl/2fDUSkFTbvcfqFeM9" target="_blank">- Shahnawaz Khan</a></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="col">
+            <div class="custom-card">
+                <div class="custom-circle" style="background-color: #2196F3;">A</div>
+                <div class="custom-card-content">
+                    <div class="custom-rating mb-2">
+                        <img src="https://cdn-icons-png.flaticon.com/512/1828/1828884.png" alt="Star">
+                        <img src="https://cdn-icons-png.flaticon.com/512/1828/1828884.png" alt="Star">
+                        <img src="https://cdn-icons-png.flaticon.com/512/1828/1828884.png" alt="Star">
+                        <img src="https://cdn-icons-png.flaticon.com/512/1828/1828884.png" alt="Star">
+                        <img src="https://cdn-icons-png.flaticon.com/512/1828/1828884.png" alt="Star">
+                    </div>
+                    <div class="custom-review-body">
+                        ...Excellent travel agency, amazing service from Natalia; she is the best professional, clearly understood what we wanted, and supported us all the way.
+                    </div>
+                    <div class="custom-reviewer"><a href="https://maps.app.goo.gl/GReDnDvZ8qrd6NCw6" target="_blank">- Alberto Borghesi</a></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card 4 -->
+        <div class="col">
+            <div class="custom-card">
+                <div class="custom-circle" style="background-color: #E91E63;">M</div>
+                <div class="custom-card-content">
+                    <div class="custom-rating mb-2">
+                        <img src="https://cdn-icons-png.flaticon.com/512/1828/1828884.png" alt="Star">
+                        <img src="https://cdn-icons-png.flaticon.com/512/1828/1828884.png" alt="Star">
+                        <img src="https://cdn-icons-png.flaticon.com/512/1828/1828884.png" alt="Star">
+                        <img src="https://cdn-icons-png.flaticon.com/512/1828/1828884.png" alt="Star">
+                        <img src="https://cdn-icons-png.flaticon.com/512/1828/1828884.png" alt="Star">
+                    </div>
+                    <div class="custom-review-body">
+                        Amazing agency. Rapid response and they will provide you with the best options.
+                        Sumera was assisting me with the whole process and she was very helpful, patient and fast.
+                    </div>
+                    <div class="custom-reviewer"><a href="https://maps.app.goo.gl/hkvS8GtcccPGL9NHA" target="_blank">- Milena Prodanic</a></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<p class="lead text-center">
+    For any questions, contact our team of consultants to perfectly tailor your experience.<br>
+</p>
+
+<!-- Team Members Section -->
+<section class="container my-5" data-load-template="frag/team.html">
+</section>
+
+<footer class="bg-black text-center text-white py-3">
+    <div class="container">
+        <p class="mb-1">&copy; 2025 Perun Consultancy Services. All rights reserved.</p>
+        <div>
+            <a href="https://www.peruntours.com" class="text-white text-decoration-none mx-2">Perun Tours Home</a>
+            |
+            <a href="terms-of-service.html" class="text-white text-decoration-none mx-2">Terms of Service</a>
+            |
+            <a href="privacy-policy.html" class="text-white text-decoration-none mx-2">Privacy Policy</a>
+        </div>
+    </div>
+</footer>
+
+<!-- Include Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/zepto/1.2.0/zepto.min.js" integrity="sha512-BrvVYNhKh6yST24E5DY/LopLO5d+8KYmIXyrpBIJ2PK+CyyJw/cLSG/BfJomWLC1IblNrmiJWGlrGueKLd/Ekw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="js/bmh.js"></script>
+<script>
+    loadPageTemplates();
+</script>
+
+
+<script type="module">
+    document.addEventListener('DOMContentLoaded', function() {
+        const popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
+        const popoverList = popoverTriggerList.map(function(popoverTriggerEl) {
+            return new bootstrap.Popover(popoverTriggerEl);
+        });
+        rwa("bmh-turkiye",null);
+    });
+</script>
+<script>window.$zoho=window.$zoho || {};$zoho.salesiq=$zoho.salesiq||{ready:function(){
+        const langEl = document.querySelectorAll('[data-chat-lang]');
+        langEl.forEach(el => {
+            el.addEventListener('click', handleChat);
+        });
+    }}</script>
+
+<script>window.$zoho=window.$zoho || {};$zoho.salesiq=$zoho.salesiq||{ready:function(){}}</script><script id="zsiqscript" src="https://salesiq.zohopublic.com/widget?wc=siqb01df8bcf105eb5895157b0c55b1f62fba68218ed39c129d8e0087e9c4190616" defer></script>
+</body>
+</html>
